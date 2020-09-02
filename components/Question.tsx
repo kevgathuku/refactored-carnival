@@ -1,9 +1,14 @@
-import * as React from 'react';
+import React, { useReducer } from 'react';
 import styled from 'styled-components';
-import { QandA } from '../types';
+import { QandA, Answer } from '../types';
 
 type Props = {
   qanda: QandA /* individual question + associated answers */;
+};
+
+type Action = {
+  type: string;
+  payload: Answer;
 };
 
 const QuestionContainer = styled.div`
@@ -35,16 +40,47 @@ const VotesContainer = styled.div`
   color: gray;
 `;
 
+function reducer(state: QandA, action: Action) {
+  switch (action.type) {
+    case 'vote': {
+      const updatedAnswers = state.answers.map((ans) => {
+        if (ans === action.payload) {
+          // Increment the chosen answer
+          return Object.assign({}, ans, {
+            votes: ans.votes + 1,
+          });
+        }
+        return ans;
+      });
+      return Object.assign({}, state, {
+        answers: updatedAnswers,
+      });
+    }
+    default:
+      throw new Error();
+  }
+}
+
 export default function Question({ qanda }: Props) {
-  const votesCount = qanda.answers.reduce((acc, ans) => acc + ans.votes, 0);
+  // Store in local state to enable modifying votes
+  const [state, dispatch] = useReducer(reducer, qanda);
+
+  const totalVotes = state.answers.reduce((acc, ans) => acc + ans.votes, 0);
 
   return (
     <QuestionContainer>
-      <h2>{qanda.question.text}</h2>
-      {qanda.answers.map((answer) => (
-        <AnswerContainer key={answer.text}>{answer.text}</AnswerContainer>
+      <h2>{state.question.text}</h2>
+      {state.answers.map((answer) => (
+        <AnswerContainer
+          key={answer.text}
+          onClick={() => {
+            dispatch({ type: 'vote', payload: answer });
+          }}
+        >
+          {answer.text}
+        </AnswerContainer>
       ))}
-      <VotesContainer>{`${votesCount} votes`} </VotesContainer>
+      <VotesContainer>{`${totalVotes} votes`} </VotesContainer>
     </QuestionContainer>
   );
 }
