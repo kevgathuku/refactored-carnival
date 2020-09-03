@@ -1,5 +1,6 @@
 import React, { useReducer } from 'react';
 import styled from 'styled-components';
+import React, { useReducer, useState } from 'react';
 import { QandA, Answer } from '../types';
 
 type Props = {
@@ -64,6 +65,7 @@ function reducer(state: QandA, action: Action) {
 export default function Question({ qanda }: Props) {
   // Store in local state to enable modifying votes
   const [state, dispatch] = useReducer(reducer, qanda);
+  const [voted, setVoted] = useState(false);
 
   const totalVotes = state.answers.reduce((acc, ans) => acc + ans.votes, 0);
 
@@ -72,9 +74,13 @@ export default function Question({ qanda }: Props) {
       <h2>{state.question.text}</h2>
       {state.answers.map((answer) => (
         <AnswerContainer
+          voted={voted}
           key={answer.text}
           onClick={() => {
-            dispatch({ type: 'vote', payload: answer });
+            if (!voted) {
+              dispatch({ type: 'vote', payload: answer });
+              setVoted(true);
+            }
           }}
         >
           {answer.text}
