@@ -11,6 +11,11 @@ type Props = {
 const PollWrapper = styled.div`
   margin: 40px auto;
   width: 350px;
+  display: flex;
+
+  @media all and max-width: (767px) {
+    width: 100%;
+  }
 `;
 
 export default function Poll({ qandas }: Props) {
