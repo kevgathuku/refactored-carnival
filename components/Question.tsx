@@ -24,8 +24,9 @@ const QuestionContainer = styled.div`
   align-items: center;
   width: 100%;
   padding: 20px;
-  border: 1px solid gray;
+  border: 0.5px solid #a09c9c1c;
   border-radius: 10px;
+  box-shadow: 2px 2px 10px 2px rgb(0 0 0 / 16%);
 `;
 
 const AnswerContainer = styled.div<AnswerProps>`
